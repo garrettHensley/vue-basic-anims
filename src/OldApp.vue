@@ -1,13 +1,49 @@
 <template>
-  <router-view v-slot="slotProps">
-    <transition name="fade-button" mode="out-in">
-      <component :is="slotProps.Component" />
+  <div class="container">
+    <list-data />
+  </div>
+  <div class="container">
+    <div class="block" :class="{ animate: animatedBlock }"></div>
+    <button @click="animateBlock">Animate</button>
+  </div>
+  <div class="container">
+    <transition
+      :css="false"
+      @before-enter="beforeEnter"
+      @before-leave="beforeLeave"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave"
+      @enter-cancelled="enterCancelled"
+      @leave-cancelled="leaveCancelled"
+    >
+      <!-- transition requires one child component. usually... -->
+      <p v-if="showParagraph">This is visible sometimes</p>
     </transition>
-  </router-view>
+    <button @click="toggleParagraph">Toggle paragraph</button>
+  </div>
+  <div class="container">
+    <transition name="fade-button" mode="out-in">
+      <button @click="showUsers" v-if="!usersAreVisible">Show Users</button>
+      <button @click="hideUsers" v-else>Hide Users</button>
+    </transition>
+  </div>
+  <base-modal @close="hideDialog" :open="dialogIsVisible">
+    <p>This is a test dialog!</p>
+
+    <button @click="hideDialog">Close it!</button>
+  </base-modal>
+
+  <div class="container">
+    <button @click="showDialog">Show Dialog</button>
+  </div>
 </template>
 
 <script>
+import ListData from './components/ListData.vue';
 export default {
+  components: { ListData },
   data() {
     return {
       dialogIsVisible: false,
@@ -154,25 +190,6 @@ button:active {
   transition: opacity 0.3s ease-in;
 }
 
-.route-enter-from {
-}
-
-.route-enter-active {
-  animation: slide-scale 0.4s ease;
-}
-
-.route-enter-to {
-}
-
-.route-leave-from {
-}
-
-.route-leave-active {
-  animation: slide-scale 0.4s ease;
-}
-
-.route-leave-to {
-}
 @keyframes modal {
   from {
     opacity: 0;
